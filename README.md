@@ -16,15 +16,11 @@ duck-persona/
 ├── tsconfig.json
 ├── hardhat.config.ts
 ├── 
-├── contracts/                   # Smart contracts
-│   ├── DuckPersona.sol         # Main contract file
+├── duck-persona-contracts/                   # Smart contracts
+│   ├── contracts        # Main contract file
 │   ├── scripts/
 │   │   ├── deploy.ts
-│   │   └── setup.ts
-│   ├── test/
-│   │   ├── DuckNFT.test.js
-│   │   ├── SkillStore.test.js
-│   │   └── integration.test.js
+│   │   
 │   └── package.json
 ├── 
 ├── lib/                        # CDK Infrastructure
