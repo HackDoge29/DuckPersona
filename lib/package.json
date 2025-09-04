@@ -1,0 +1,33 @@
+{
+  "name": "duckpersona-stack",
+  "version": "1.0.0",
+  "bin": {
+    "duck-persona-cdk": "bin/duck-persona-cdk.js"
+  },
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk",
+    "deploy": "cdk deploy",
+    "destroy": "cdk destroy",
+    "diff": "cdk diff",
+    "synth": "cdk synth",
+    "bootstrap": "cdk bootstrap"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "aws-cdk-lib": "^2.214.0",
+    "dotenv": "^17.2.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.1",
+    "aws-cdk": "^2.1028.0",
+    "typescript": "^5.9.2"
+  }
+}
