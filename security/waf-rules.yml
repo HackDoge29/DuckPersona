@@ -1,0 +1,60 @@
+# security/waf-rules.yml
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'WAF rules for DuckPersona API protection'
+
+Resources:
+  WebACL:
+    Type: AWS::WAFv2::WebACL
+    Properties:
+      Name: DuckPersona-WAF
+      Scope: REGIONAL
+      DefaultAction:
+        Allow: {}
+      Rules:
+        - Name: RateLimitRule
+          Priority: 1
+          Statement:
+            RateBasedStatement:
+              Limit: 1000  # 1000 requests per 5 minutes
+              AggregateKeyType: IP
+          Action:
+            Block: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: RateLimitRule
+
+        - Name: SQLInjectionRule
+          Priority: 2
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesKnownBadInputsRuleSet
+          OverrideAction:
+            None: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: SQLInjectionRule
+
+        - Name: TelegramBotRule
+          Priority: 3
+          Statement:
+            ByteMatchStatement:
+              SearchString: !Sub '${TelegramBotToken}'
+              FieldToMatch:
+                Body: {}
+              TextTransformations:
+                - Priority: 0
+                  Type: NONE
+          Action:
+            Allow: {}
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: TelegramBotRule
+
+Parameters:
+  TelegramBotToken:
+    Type: String
+    Description: Telegram Bot Token for webhook validation

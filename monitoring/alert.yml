@@ -1,0 +1,62 @@
+# monitoring/alerts.yml
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CloudWatch Alarms for DuckPersona'
+
+Resources:
+  HighErrorRateAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: DuckPersona-HighErrorRate
+      AlarmDescription: 'High error rate in Lambda functions'
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 10
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: FunctionName
+          Value: DuckPersona-OrchestratorFunction
+      AlarmActions:
+        - !Ref AlertsTopic
+
+  HighLatencyAlarm:
+    Type: AWS::CloudWatch::Alarm  
+    Properties:
+      AlarmName: DuckPersona-HighLatency
+      AlarmDescription: 'High latency in Lambda functions'
+      MetricName: Duration
+      Namespace: AWS/Lambda
+      Statistic: Average
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 15000  # 15 seconds
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: FunctionName
+          Value: DuckPersona-OrchestratorFunction
+
+  DynamoDBThrottleAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: DuckPersona-DynamoDBThrottles
+      AlarmDescription: 'DynamoDB throttling detected'
+      MetricName: ReadThrottles
+      Namespace: AWS/DynamoDB
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      Dimensions:
+        - Name: TableName
+          Value: duck-persona-profiles
+
+  AlertsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: DuckPersona-Alerts
+      Subscription:
+        - Protocol: email
+          Endpoint: alerts@duckpersona.com
