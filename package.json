@@ -1,0 +1,37 @@
+{
+  "name": "duck-persona",
+  "version": "1.0.0",
+  "description": "AI-Powered Duck Avatar NFTs with Telegram Bot Interface",
+  "scripts": {
+    "build": "tsc && npm run build:contracts && npm run build:lambdas",
+    "build:contracts": "cd contracts && npx hardhat compile",
+    "build:lambdas": "cd lambda && npm run build:all",
+    "deploy": "npm run build && npx cdk deploy --all",
+    "deploy:contracts": "cd contracts && npx hardhat run scripts/deploy.ts --network polygon",
+    "test": "npm run test:contracts && npm run test:lambdas",
+    "test:contracts": "cd contracts && npx hardhat test",
+    "test:lambdas": "cd lambda && npm test",
+    "setup:telegram": "node scripts/setup-telegram-webhook.js",
+    "bootstrap": "npx cdk bootstrap",
+    "diff": "npx cdk diff",
+    "destroy": "npx cdk destroy --all"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "^2.100.0",
+    "constructs": "^10.3.0",
+    "@aws-sdk/client-dynamodb": "^3.400.0",
+    "@aws-sdk/client-s3": "^3.400.0",
+    "@aws-sdk/client-bedrock-runtime": "^3.400.0",
+    "@aws-sdk/client-opensearch-serverless": "^3.400.0",
+    "ethers": "^6.7.1",
+    "axios": "^1.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.5.0",
+    "typescript": "^5.1.6",
+    "aws-cdk": "^2.100.0",
+    "@hardhat/ethers": "^3.0.4",
+    "hardhat": "^2.17.1",
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0"
+  }
+}

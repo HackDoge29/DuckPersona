@@ -3,90 +3,52 @@ DuckPersona creates AI Duck NFTs that are actual intelligent agents - not just s
 
 ## 📁 Project Structure
 
+## 🤖 Telegram Commands
+
+- `/mint` - Create your AI Duck NFT
+- `/profile` - View duck stats and skills
+- `/upgrade <skill>` - Purchase and equip skills
+- `/tip @user <amount>` - Tip another user's duck
+- `/task create "desc" <reward> <hours>` - Create a task
+- `/task complete <hash> <proof>` - Complete a task
+- Chat naturally with your duck for AI interactions!
+
+## 🌟 Features
+
+### Current
+- ✅ Duck NFT minting with deterministic traits
+- ✅ $DUCK token economy with tips and tasks
+- ✅ Skill system (MemeSmith, Summarizer)
+- ✅ AI chat with persistent memory
+- ✅ Telegram bot interface
+- ✅ Action execution system
+
+### Roadmap
+- 🔄 Advanced skill marketplace
+- 🔄 Duck-to-duck interactions
+- 🔄 Seasonal events and rewards
+- 🔄 Cross-chain bridge support
+- 🔄 DAO governance for new features
+
+## 🛠️ Development
+
+### Project Structure
 ```
 duck-persona/
-├── README.md
-├── package.json
-├── .env.example
-├── .gitignore
-├── Makefile
-├── docker-compose.yml
-├── cdk.json
-├── app.ts
-├── tsconfig.json
-├── hardhat.config.ts
-├── 
-├── duck-persona-contracts/                   # Smart contracts
-│   ├── contracts        # Main contract file
-│   ├── scripts/
-│   │   ├── deploy.ts
-│   │   
-│   └── package.json
-├── 
-├── lib/                        # CDK Infrastructure
-│   └── duck-persona-stack.ts
-├── 
-├── lambda/                     # AWS Lambda functions
-│   ├── build-all.sh
-│   ├── orchestrator/
-│   │   ├── index.ts           # Main orchestrator (from previous artifact)
-│   │   ├── package.json
-│   │   └── tsconfig.json
-│   ├── image-gen/
-│   │   ├── index.py           # Duck image generator
-│   │   └── requirements.txt
-│   ├── meme-gen/
-│   │   ├── index.py           # Meme generator
-│   │   └── requirements.txt
-│   ├── summarizer/
-│   │   ├── index.js           # Content summarizer
-│   │   └── package.json
-│   ├── layers/
-│   │   └── node_modules/
-│   │       └── package.json
-│   └── test/
-│       ├── orchestrator.test.js
-│       ├── imageGen.test.py
-│       └── integration.test.js
-├── 
-├── scripts/                    # Deployment & setup scripts
-│   ├── setup-telegram-webhook.js
-│   ├── deploy-all.sh
-│   ├── test-deployment.js
-│   └── generate-env.js
-├── 
-├── monitoring/                 # CloudWatch & monitoring
-│   ├── dashboard.json
-│   ├── alerts.yml
-│   └── performance-optimizer.js
-├── 
-├── security/                   # Security configurations
-│   ├── waf-rules.yml
-│   ├── iam-policies.json
-│   └── secrets-manager.yml
-├── 
-├── docs/                       # Documentation
-│   ├── API.md
-│   ├── DEPLOYMENT.md
-│   ├── ARCHITECTURE.md
-│   ├── TELEGRAM_SETUP.md
-│   └── TROUBLESHOOTING.md
-├── 
-├── .github/                    # GitHub Actions
-│   ├── workflows/
-│   │   ├── deploy.yml
-│   │   ├── test.yml
-│   │   └── security-scan.yml
-│   ├── ISSUE_TEMPLATE/
-│   │   ├── bug_report.md
-│   │   └── feature_request.md
-│   └── pull_request_template.md
-└── 
-└── examples/                   # Usage examples
-    ├── telegram-bot-setup/
-    ├── contract-interaction/
-    └── api-examples/
+├── contracts/          # Smart contracts
+├── lambda/            # AWS Lambda functions
+├── lib/              # CDK infrastructure
+├── scripts/          # Deployment scripts
+├── test/             # Test suites
+├── monitoring/       # Observability configs
+└── docs/             # Documentation
 ```
+
+### Available Skills
+- **MemeSmith**: Create memes and images
+- **Summarizer**: Summarize links and content
+- More skills coming soon!
+
 
 ## 🚀 Quick Start Guide
 
@@ -176,11 +138,11 @@ PINATA_API_KEY=your_pinata_key  # For IPFS storage
 
 ### Pre-deployment
 
-- [ ] Environment variables configured
-- [ ] AWS credentials set up
-- [ ] Telegram bot created (@BotFather)
-- [ ] Domain name registered (optional)
-- [ ] SSL certificate obtained (optional)
+- [x] Environment variables configured
+- [x] AWS credentials set up
+- [x] Telegram bot created (@BotFather)
+- [x] Domain name registered (optional)
+- [x] SSL certificate obtained (optional)
 
 ### Contract Deployment
 
@@ -190,13 +152,13 @@ npx hardhat node
 npm run deploy:contracts -- --network localhost
 
 # 2. Deploy to testnet
-npm run deploy:contracts -- --network mumbai
+npm run deploy:contracts -- --network duckTestnet
 
 # 3. Verify contracts
-npx hardhat verify --network mumbai 
+npx hardhat verify --network duckTestnet 
 
 # 4. Deploy to mainnet
-npm run deploy:contracts -- --network polygon
+npm run deploy:contracts -- --network duckMainnet
 ```
 
 ### AWS Infrastructure
@@ -258,31 +220,6 @@ npm run test:load
 npm run test:telegram-load
 ```
 
-## 🔒 Security Considerations
-
-### Smart Contract Security
-
-- [ ] All contracts audited by professional auditors
-- [ ] Reentrancy protection on all state-changing functions
-- [ ] Access control properly implemented
-- [ ] Integer overflow/underflow protection
-- [ ] Proper event emission for all critical actions
-
-### AWS Security
-
-- [ ] IAM roles follow least privilege principle
-- [ ] API Gateway rate limiting enabled
-- [ ] WAF rules configured for common attacks
-- [ ] CloudTrail logging enabled
-- [ ] Secrets stored in AWS Secrets Manager
-
-### Bot Security
-
-- [ ] Webhook URL validation
-- [ ] Input sanitization on all user messages
-- [ ] Rate limiting per user/chat
-- [ ] Memory access controls
-- [ ] Action execution sandboxing
 
 ## 📊 Monitoring & Observability
 
@@ -336,31 +273,7 @@ docker-compose -f monitoring/grafana-stack.yml up -d
 6. Merge to main branch
 7. Automatic deployment via GitHub Actions
 
-### Code Quality
 
-```bash
-# Linting
-npm run lint
-
-# Formatting
-npm run format
-
-# Security scanning
-npm audit
-npm run security-scan
-
-# Type checking
-npm run type-check
-```
-
-### Release Process
-
-1. Version bump in package.json
-2. Update CHANGELOG.md
-3. Create GitHub release
-4. Tag triggers production deployment
-5. Post-deployment verification
-6. Monitor key metrics for 24 hours
 
 ## 🔄 CI/CD Pipeline
 
@@ -485,16 +398,6 @@ npm run dev -- --verbose
 - [OpenZeppelin Contracts](https://docs.openzeppelin.com/contracts/)
 
 
-### Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for:
-- Code style guidelines
-- Pull request process
-- Issue reporting
-- Development setup
-
----
-
 ## 🎉 Ready for Production!
 
 This complete DuckPersona implementation includes:
@@ -508,9 +411,7 @@ This complete DuckPersona implementation includes:
 ✅ **Security**: WAF, IAM, input validation, and audit trails
 ✅ **Monitoring**: Dashboards, alerts, and performance optimization
 
-**Total Development Time Estimate**: 3-4 weeks for full production deployment with proper testing and security audits.
 
-**Hackathon MVP**: The core features (minting, skills, chat, tips, tasks) can be deployed in 48-72 hours for demonstration purposes.
 
 Each component is production-ready with proper error handling, logging, security measures, and scaling capabilities. The modular architecture allows for easy feature additions and maintenance.
 

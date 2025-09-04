@@ -1,0 +1,110 @@
+name: Deploy DuckPersona
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  AWS_REGION: us-east-1
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run tests
+      run: npm test
+      
+    - name: Build project
+      run: npm run build
+
+  deploy-contracts:
+    if: github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Deploy contracts
+      env:
+        PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+        RPC_URL: ${{ secrets.RPC_URL }}
+      run: npm run deploy:contracts
+
+  deploy-aws:
+    if: github.ref == 'refs/heads/main' 
+    needs: [test, deploy-contracts]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Deploy to AWS
+      env:
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        RPC_URL: ${{ secrets.RPC_URL }}
+        PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+        DUCK_NFT_CONTRACT: ${{ secrets.DUCK_NFT_CONTRACT }}
+        DUCK_TOKEN_CONTRACT: ${{ secrets.DUCK_TOKEN_CONTRACT }}
+        SKILL_STORE_CONTRACT: ${{ secrets.SKILL_STORE_CONTRACT }}
+        PERSONA_UPGRADES_CONTRACT: ${{ secrets.PERSONA_UPGRADES_CONTRACT }}
+        TIPS_TASKS_CONTRACT: ${{ secrets.TIPS_TASKS_CONTRACT }}
+      run: npm run deploy
+
+  setup-webhook:
+    if: github.ref == 'refs/heads/main'
+    needs: deploy-aws
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Setup Telegram webhook
+      env:
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+      run: npm run setup:telegram

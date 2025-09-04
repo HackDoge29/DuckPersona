@@ -1,0 +1,67 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  dynamodb-local:
+    image: amazon/dynamodb-local:latest
+    container_name: duck-persona-dynamodb
+    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-inMemory"]
+    ports:
+      - "8000:8000"
+    environment:
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=dummy
+      - AWS_SECRET_ACCESS_KEY=dummy
+
+  opensearch-local:
+    image: opensearchproject/opensearch:latest
+    container_name: duck-persona-opensearch
+    environment:
+      - cluster.name=duck-persona-cluster
+      - node.name=duck-persona-node
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "DISABLE_INSTALL_DEMO_CONFIG=true"
+      - "DISABLE_SECURITY_PLUGIN=true"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+
+  redis:
+    image: redis:7-alpine
+    container_name: duck-persona-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+
+  ganache:
+    image: trufflesuite/ganache:latest
+    container_name: duck-persona-ganache
+    ports:
+      - "8545:8545"
+    command: >
+      --deterministic
+      --accounts 10
+      --host 0.0.0.0
+      --mnemonic "test test test test test test test test test test test junk"
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: duck-persona-ngrok
+    restart: unless-stopped
+    command:
+      - "start"
+      - "--all"
+      - "--config"
+      - "/etc/ngrok.yml"
+    volumes:
+      - ./ngrok.yml:/etc/ngrok.yml
+    ports:
+      - 4040:4040
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
